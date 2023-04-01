@@ -71,8 +71,10 @@ class Voxurf(torch.nn.Module):
             'DenseGrid', channels=1, world_size=self.world_size,
             xyz_min=self.xyz_min, xyz_max=self.xyz_max)
         
-        print("self.sdf", self.sdf.shape)
-        print("world_size", self.world_size)
+        print("====================================\n\n\n")        
+        print("self.sdf.grid", self.sdf.shape)
+        print("====================================\n\n\n")
+        # print("world_size", self.world_size)
         if self.sdf_init_mode == "ball_init":
             x, y, z = np.mgrid[-1.0:1.0:self.world_size[0].item() * 1j, -1.0:1.0:self.world_size[1].item() * 1j, -1.0:1.0:self.world_size[2].item() * 1j]
             self.sdf.grid.data = torch.from_numpy((x ** 2 + y ** 2 + z ** 2) ** 0.5 -1).float()[None, None, ...]
@@ -105,7 +107,6 @@ class Voxurf(torch.nn.Module):
             self.k0 = grid.create_grid(
                 'DenseGrid', channels=self.k0_dim, world_size=self.world_size,
                 xyz_min=self.xyz_min, xyz_max=self.xyz_max)
-            print("self.k0", self.k0.shape)
             self.rgbnet_direct = rgbnet_direct
             self.register_buffer('posfreq', torch.FloatTensor([(2**i) for i in range(posbase_pe)]))
             self.register_buffer('viewfreq', torch.FloatTensor([(2**i) for i in range(viewbase_pe)]))
