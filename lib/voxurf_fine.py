@@ -90,6 +90,10 @@ class Voxurf(torch.nn.Module):
         else:
             raise NotImplementedError
 
+        print("====================================\n\n\n")        
+        print("self.sdf.grid FINE", self.sdf.grid.shape)
+        print("====================================\n\n\n")
+
         self.init_smooth_conv(smooth_ksize, smooth_sigma)
 
         # init color representation
@@ -112,6 +116,11 @@ class Voxurf(torch.nn.Module):
             self.register_buffer('posfreq', torch.FloatTensor([(2**i) for i in range(posbase_pe)]))
             self.register_buffer('viewfreq', torch.FloatTensor([(2**i) for i in range(viewbase_pe)]))
             dim0 = (3+3*posbase_pe*2) + (3+3*viewbase_pe*2)
+
+
+            print("====================================\n\n\n")        
+            print("self.k0.grid FINE", self.k0.grid.shape)
+            print("====================================\n\n\n")
 
             self.use_grad_norm = use_grad_norm
             self.center_sdf = center_sdf
@@ -149,6 +158,7 @@ class Voxurf(torch.nn.Module):
             nn.init.constant_(self.rgbnet[-1].bias, 0)
             print('feature voxel grid', self.k0.grid.shape)
             print('mlp', self.rgbnet)
+
 
             # the second rgb net
             self.k_res = k_res

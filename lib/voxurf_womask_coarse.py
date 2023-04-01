@@ -107,6 +107,10 @@ class Voxurf(torch.nn.Module):
         else:
             raise NotImplementedError
 
+        print("====================================\n\n\n")        
+        print("self.sdf.grid", self.sdf.grid.shape)
+        print("====================================\n\n\n")
+
         self.init_smooth_conv(smooth_ksize, smooth_sigma)
         self.smooth_scale = smooth_scale
 
@@ -131,6 +135,10 @@ class Voxurf(torch.nn.Module):
             'DenseGrid', channels=self.bg_k0_dim, world_size=self.world_size_bg,
             xyz_min=self.xyz_min, xyz_max=self.xyz_max)
 
+        print("====================================\n\n\n")        
+        print("self.k0.grid", self.k0.grid.shape)
+        print("====================================\n\n\n")
+    
         self.rgbnet_direct = rgbnet_direct
         self.register_buffer('posfreq', torch.FloatTensor([(2**i) for i in range(bg_posbase_pe)]))
         self.register_buffer('bg_posfreq', torch.FloatTensor([(2**i) for i in range(posbase_pe)]))
