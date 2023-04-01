@@ -236,7 +236,7 @@ class Voxurf(torch.nn.Module):
         print('world_size      ', self.world_size)
         print('voxel_size_base ', self.voxel_size_base)
         print('voxel_size_ratio', self.voxel_size_ratio)
-        prit("self.xyz_max", self.xyz_max, self.xyz_min)
+        print("self.xyz_max", self.xyz_max, self.xyz_min)
         print("=============================================================\n\n\n\n")
 
     def get_kwargs(self):
