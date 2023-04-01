@@ -804,9 +804,9 @@ def scene_rep_reconstruction(args, cfg, cfg_model, cfg_train, xyz_min, xyz_max, 
 
         # final mesh validation
         if global_step == cfg_train.N_iters and stage == 'surf' and 'fine' in args.sdf_mode:
-            mesh = validate_mesh(model, 512, threshold=0.0, prefix="{}final".format(prefix), world_space=True,
+            mesh_path = validate_mesh(model, 512, threshold=0.0, prefix="{}final".format(prefix), world_space=True,
                           scale_mats_np=data_dict['scale_mats_np'], gt_eval='dtu' in cfg.basedir, runtime=False, scene=args.scene)
-            wandb.log({"final/mesh": wandb.Object3D(mesh)})
+            wandb.log({"final/mesh": wandb.Object3D(open(mesh_path))})
 
 def train(args, cfg, data_dict):
 
@@ -907,7 +907,7 @@ def validate_mesh(model, resolution=128, threshold=0.0, prefix="", world_space=F
         mesh = trimesh.Trimesh(vertices, triangles, vertex_colors=vertex_colors)
     else:
         mesh = trimesh.Trimesh(vertices, triangles)
-    mesh_path = os.path.join(cfg.basedir, cfg.expname, 'meshes', "{}_".format(scene)+prefix+'.ply')
+    mesh_path = os.path.join(cfg.basedir, cfg.expname, 'meshes', "{}_".format(scene)+prefix+'.obj')
     mesh.export(mesh_path)
     logger.info("mesh saved at " + mesh_path)
     if gt_eval:
@@ -917,7 +917,7 @@ def validate_mesh(model, resolution=128, threshold=0.0, prefix="", world_space=F
         logger.info("mesh evaluation with {}".format(res))
         logger.info(" [ d2s: {:.3f} | s2d: {:.3f} | mean: {:.3f} ]".format(mean_d2s, mean_s2d, over_all))
         return over_all
-    return mesh
+    return mesh_path
 
 if __name__=='__main__':
     # load setup
