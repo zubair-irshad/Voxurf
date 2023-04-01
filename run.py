@@ -21,6 +21,7 @@ from torch_efficient_distloss import flatten_eff_distloss
 from scipy.spatial.transform import Rotation as Rot
 from scipy.spatial.transform import Slerp
 import wandb
+wandb.login(key = '996ee27de02ee214ded37d491317d5a0567f6dc8')
 wandb.init(project="Voxurf")
 
 def config_parser():
