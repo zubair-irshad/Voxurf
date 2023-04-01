@@ -846,6 +846,10 @@ def train(args, cfg, data_dict):
             model_class=dvgo_ori.DirectVoxGO, model_path=coarse_ckpt_path,
             thres=cfg.fine_model_and_render.bbox_thres)
 
+    print("================================================\n\n\n")
+    print(">>> xyz_min_fine: ", xyz_min_fine, " >>> xyz_max_fine", xyz_max_fine)
+    print("================================================\n\n\n")
+    
     if hasattr(cfg, 'surf_train'):
         eps_surf = time.time()
         scene_rep_reconstruction(
