@@ -21,7 +21,8 @@ surf_train=dict(
     load_density_from=None,
     load_sdf_from='auto', # './logs/dtu/scan40_smooth_sdf/surf_001000.tar',  
 
-    pg_scale=[15000],
+    # pg_scale=[15000],
+    pg_scale=[],
     scale_ratio=4.096,
     weight_rgb0=0.5,  # this is for the first rgbnet
     weight_main=1,    # this is for k_rgbnet, which is the final output
@@ -56,8 +57,11 @@ surf_train=dict(
 )
 # CUDA_VISIBLE_DEVICES=3 python run_surf_new.py --config configs/dtu_test/head_test.py --render_test -s head_test_geo19 --no_reload --sdf_mode neus_v4 --scene 122
 surf_model_and_render=dict(
-    num_voxels=256**3,
-    num_voxels_base=256**3,
+    # num_voxels=256**3,
+    # num_voxels_base=256**3,
+    num_voxels=160**3,
+    num_voxels_base=160**3,
+    num_voxels_bg=160**3,
     posbase_pe=5,
     viewbase_pe=1,
     k_posbase_pe=5, # default = 5
