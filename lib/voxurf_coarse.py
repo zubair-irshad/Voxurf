@@ -107,6 +107,11 @@ class Voxurf(torch.nn.Module):
             self.k0 = grid.create_grid(
                 'DenseGrid', channels=self.k0_dim, world_size=self.world_size,
                 xyz_min=self.xyz_min, xyz_max=self.xyz_max)
+
+            print("====================================\n\n\n")        
+            print("self.k0.grid", self.k0.grid.shape)
+            print("====================================\n\n\n")
+
             self.rgbnet_direct = rgbnet_direct
             self.register_buffer('posfreq', torch.FloatTensor([(2**i) for i in range(posbase_pe)]))
             self.register_buffer('viewfreq', torch.FloatTensor([(2**i) for i in range(viewbase_pe)]))
