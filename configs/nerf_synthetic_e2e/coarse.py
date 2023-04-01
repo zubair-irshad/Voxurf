@@ -3,14 +3,14 @@ import os
 _base_ = os.path.join('..', 'default_fine_s.py')
 
 expname = 'scan'
-basedir = os.path.join('.', 'logs', 'nerf_synthetic')
+basedir = os.path.join('/experiments/zubair/voxurf', 'logs', 'nerf_synthetic')
 train_all = True
 reso_level = 2
 exp_stage = 'coarse'
 
 
 data = dict(
-    datadir=os.path.join('.', 'data', 'nerf_synthetic'),
+    datadir=os.path.join('/experiments/zubair/datasets/voxurf', 'data', 'nerf_synthetic'),
     dataset_type='blender',
     # inverse_y=True,
     white_bkgd=True,
