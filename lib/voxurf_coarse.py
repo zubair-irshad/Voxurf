@@ -72,7 +72,7 @@ class Voxurf(torch.nn.Module):
             xyz_min=self.xyz_min, xyz_max=self.xyz_max)
         
         print("====================================\n\n\n")        
-        print("self.sdf.grid", self.sdf.shape)
+        print("self.sdf.grid", self.sdf.grid.shape)
         print("====================================\n\n\n")
         # print("world_size", self.world_size)
         if self.sdf_init_mode == "ball_init":
