@@ -10,7 +10,7 @@ exp_stage = 'coarse'
 
 
 data = dict(
-    datadir=os.path.join('/experiments/zubair/datasets/voxurf', 'data', 'nerf_synthetic'),
+    datadir=os.path.join('/experiments/zubair/datasets/voxurf', 'data', 'nerf_synthetic/'),
     dataset_type='blender',
     # inverse_y=True,
     white_bkgd=True,
