@@ -820,6 +820,9 @@ def train(args, cfg, data_dict):
     cfg.dump(os.path.join(cfg.basedir, cfg.expname, 'config.py'))
 
     if args.run_dvgo_init:
+        print("==============================\n\n\n")
+        print("inside RUN DVGO init ")
+        print("==============================\n\n\n")
         # coarse geometry searching
         eps_coarse = time.time()
         xyz_min_coarse, xyz_max_coarse = compute_bbox_by_cam_frustrm(args=args, cfg=cfg, **data_dict)
@@ -837,6 +840,9 @@ def train(args, cfg, data_dict):
     logger.info("+ "*10 + 'coarse_expname' + coarse_expname + " +"*10)
 
     if args.no_dvgo_init:
+        print("==============================\n\n\n")
+        print("inside RUN DVGO init ")
+        print("==============================\n\n\n")
         # for the w\o mask setting
         box_size_ = cfg.surf_train.get('box_size', 1.5)
         print(">>> box_size: ", box_size_)
@@ -849,7 +855,7 @@ def train(args, cfg, data_dict):
     print("================================================\n\n\n")
     print(">>> xyz_min_fine: ", xyz_min_fine, " >>> xyz_max_fine", xyz_max_fine)
     print("================================================\n\n\n")
-    
+
     if hasattr(cfg, 'surf_train'):
         eps_surf = time.time()
         scene_rep_reconstruction(
