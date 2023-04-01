@@ -11,9 +11,8 @@ plyfile
 scikit-image
 scikit-learn
 ninja
-tensorboard
 pymcubes
 setuptools==59.5.0
 icecream
-torch_efficient_distloss
+# torch_efficient_distloss
 matplotlib
