@@ -390,6 +390,11 @@ def scene_rep_reconstruction(args, cfg, cfg_model, cfg_train, xyz_min, xyz_max, 
     scale_ratio = getattr(cfg_train, 'scale_ratio', 2)
     num_voxels = model_kwargs.pop('num_voxels')
     num_voxels_bg = model_kwargs.pop('num_voxels_bg', num_voxels)
+
+    print("===============================\n\n\n")
+    print("num_voxels, num_voxels_bg", num_voxels, num_voxels_bg)
+    print("===============================\n\n\n")
+    
     if len(cfg_train.pg_scale) and not args.render_only:
         deduce = (scale_ratio**len(cfg_train.pg_scale))
         num_voxels = int(num_voxels / deduce)
