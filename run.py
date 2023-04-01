@@ -20,7 +20,8 @@ from lib.utils import rgb_to_luminance, get_sobel, calc_grad, \
 from torch_efficient_distloss import flatten_eff_distloss
 from scipy.spatial.transform import Rotation as Rot
 from scipy.spatial.transform import Slerp
-
+import wandb
+wandb.init(project="Voxurf")
 
 def config_parser():
     '''Define command line arguments
@@ -669,6 +670,10 @@ def scene_rep_reconstruction(args, cfg, cfg_model, cfg_train, xyz_min, xyz_max, 
                 bg_mask_lst.append(render_result['bg_mask'].float().mean().detach().cpu().numpy())
         s_val = render_result["s_val"] if "s_val" in render_result else 0
         s_val_lst.append(s_val)
+        
+        wandb.log({"train/psnr": psnr})
+        wandb.log({"train/s_val": s_val})
+        wandb.log({"train/mask":  mask_lst[-1]})
         # writer.add_scalar('train/psnr', psnr, global_step)
         # writer.add_scalar('train/s_val', s_val, global_step)
         # writer.add_scalar('train/mask', mask_lst[-1], global_step)
@@ -767,20 +772,23 @@ def scene_rep_reconstruction(args, cfg, cfg_model, cfg_train, xyz_min, xyz_max, 
                     'render_in_out': True,
                 },
             }
-            validate_image(cfg, stage, global_step, data_dict, render_viewpoints_kwargs, eval_all=cfg_train.N_iters==global_step)
-
+            rgbs, disps, gt_imgs = validate_image(cfg, stage, global_step, data_dict, render_viewpoints_kwargs, eval_all=cfg_train.N_iters==global_step)
+            wandb.log({"val/gt_rgb": [wandb.Image(image) for image in gt_imgs]})
+            wandb.log({"val/rgbs": [wandb.Image(image) for image in rgbs]})
+            wandb.log({"val/disps": [wandb.Image(image) for image in disps]})
         # validate mesh
         prefix = args.prefix + '_' if args.prefix else ''
         prefix += args.suffix + '_' if args.suffix else ''
         if 'eval_iters' in cfg_train and stage == 'surf':
             if global_step - start in cfg_train.eval_iters and stage == 'surf':
                 gt_eval = 'dtu' in cfg.basedir
-                cd = validate_mesh(model, resolution=256,
+                mesh = validate_mesh(model, resolution=256,
                                    prefix="{}{}_fine".format(prefix, global_step),
                                    gt_eval=gt_eval,
                                    world_space=True,
                                    scale_mats_np=data_dict['scale_mats_np'],
                                    scene=args.scene)
+                wandb.log({"mesh": wandb.Object3D(mesh)})
 
         # save checkpoints
         if global_step == cfg_train.N_iters:
@@ -795,9 +803,9 @@ def scene_rep_reconstruction(args, cfg, cfg_model, cfg_train, xyz_min, xyz_max, 
 
         # final mesh validation
         if global_step == cfg_train.N_iters and stage == 'surf' and 'fine' in args.sdf_mode:
-            validate_mesh(model, 512, threshold=0.0, prefix="{}final".format(prefix), world_space=True,
+            mesh = validate_mesh(model, 512, threshold=0.0, prefix="{}final".format(prefix), world_space=True,
                           scale_mats_np=data_dict['scale_mats_np'], gt_eval='dtu' in cfg.basedir, runtime=False, scene=args.scene)
-
+            wandb.log({"final/mesh": wandb.Object3D(mesh)})
 
 def train(args, cfg, data_dict):
 
@@ -860,6 +868,7 @@ def validate_image(cfg, stage, step, data_dict, render_viewpoints_kwargs, eval_a
     logger.info("validating test set idx: {}".format(rand_idx))
     eval_lpips_alex = args.eval_lpips_alex and eval_all
     eval_lpips_vgg = args.eval_lpips_alex and eval_all
+    gt_imgs=[data_dict['images'][i].cpu().numpy() for i in data_dict['i_test']][rand_idx][None]
     rgbs, disps = render_viewpoints(
         render_poses=data_dict['poses'][data_dict['i_test']][rand_idx][None],
         HW=data_dict['HW'][data_dict['i_test']][rand_idx][None],
@@ -869,6 +878,7 @@ def validate_image(cfg, stage, step, data_dict, render_viewpoints_kwargs, eval_a
         savedir=testsavedir,
         eval_ssim=args.eval_ssim, eval_lpips_alex=eval_lpips_alex, eval_lpips_vgg=eval_lpips_vgg, idx=rand_idx, step=step,
         **render_viewpoints_kwargs)
+    return rgbs, disps, gt_imgs
 
 def validate_mesh(model, resolution=128, threshold=0.0, prefix="", world_space=False,
                   scale_mats_np=None, gt_eval=False, runtime=True, scene=122, smooth=True,
@@ -906,7 +916,7 @@ def validate_mesh(model, resolution=128, threshold=0.0, prefix="", world_space=F
         logger.info("mesh evaluation with {}".format(res))
         logger.info(" [ d2s: {:.3f} | s2d: {:.3f} | mean: {:.3f} ]".format(mean_d2s, mean_s2d, over_all))
         return over_all
-    return 0.
+    return mesh
 
 if __name__=='__main__':
     # load setup
